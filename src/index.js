@@ -1,5 +1,7 @@
 import './styles/style.css';
 
+import parallaxScene from './scenes/parallaxScene'
+
 const config = {
   type: Phaser.AUTO,
   width: 800,
@@ -10,7 +12,7 @@ const config = {
       gravity: { y: 200 }
     }
   },
-  scene: [HelloWorldScene]
+  scene: [parallaxScene]
 }
 
 export default new Phaser.Game(config)

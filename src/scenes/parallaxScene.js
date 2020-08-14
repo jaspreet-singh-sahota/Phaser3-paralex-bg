@@ -70,15 +70,18 @@ export default class ParallaxScene extends Phaser.Scene {
     this.rock3 = backgroundRepeat(this, width / 1.1, height / 1.3,'rock1', 0.75, 0.4, 0.4) 
     this.flower1 = backgroundRepeat(this, width / 1.7, height / 1.2,'flower1', 0.75, 0.4, 0.4)
 
-    this.player = this.add.sprite(1000 * 0.1, 700 * 0.45, 'player', 3).setScale(1.5, 1.5)
-    this.physics.add.existing(this.player);
-    this.player.body.setCollideWorldBounds(true);
+    this.player1 = this.add.sprite(1000 * 0.1, 700 * 0.45, 'player', 3).setScale(1.5, 1.5)
+    this.physics.add.existing(this.player1);
+    this.player = this.physics.add.sprite(width * 0.1, height * 0.4, 'player', 3).setScale(1.3, 1.3);
+
+    this.player.setBounce(0.2);
+    // this.player.setCollideWorldBounds(true);
+    this.player1.body.setCollideWorldBounds(true);
     this.cameras.main.startFollow(this.player);
     
     
     this.flower2 = backgroundRepeat(this, width / 2.5, height / 1.3,'flower2', 0.75, 0.4, 0.4) 
     this.ground2 = backgroundRepeat(this, 0, height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.player)
-    // this.physics.add.overlap(this.player, [this.ground2], null, this);
 
     if (!this.anims.get('walking')) {
       // walking animation
@@ -103,44 +106,37 @@ export default class ParallaxScene extends Phaser.Scene {
 
 
     if (this.cursors.left.isDown) {
-      console.log(this.player)
-      this.player.setVelocityX(130);
-      cam.scrollX -= speed
-    }
-    else if (this.cursors.right.isDown) {
-      cam.scrollX += speed
-
+      this.player.setVelocityX(-this.playerSpeed);
+      this.player.flipX = true;
+      this.player.anims.play('walking');
+    } else if (this.cursors.right.isDown) {
+      this.player.setVelocityX(this.playerSpeed);
+      this.player.flipX = false;
+      // if (onGround && !this.player.anims.isPlaying)
+        this.player.anims.play('walking');
+    } else {
+      this.player.body.setVelocityX(0);
+      this.player.setFrame(10);
     }
 
     // // movement to the left
     // if (this.cursors.left.isDown) {
 
-    //   this.player.flipX = true;
 
+      //   if (onGround && !this.player.anims.isPlaying)
     //   // play animation if none is playing
-    //   if (onGround && !this.player.anims.isPlaying)
-    //     this.player.anims.play('walking');
+    //     
     // }
 
     // // movement to the right
-    // else if (this.cursors.right.isDown) {
-    //   this.player.setVelocityX(this.playerSpeed);
-// 
-    //   this.player.flipX = false;
-
-    //   // play animation if none is playing
-    //   if (onGround && !this.player.anims.isPlaying)
-    //     this.player.anims.play('walking');
-    // } else {
-    //   // make the player stop
-    //   this.player.body.setVelocityX(0);
+    // 
 
     //   // stop walking animation
     //   this.player.anims.stop('walking');
 
     //   // set default frame
     //   if (onGround)
-    //     this.player.setFrame(10);
+    //     
     // }
 
     // // handle jumping

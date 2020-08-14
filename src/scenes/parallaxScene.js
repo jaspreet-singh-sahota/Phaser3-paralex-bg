@@ -1,4 +1,4 @@
-const backgroundRepeat = (scene, w , h, count, text, speed , o1 , o2 , s1 ,s2) => {
+const backgroundRepeat = (scene, w, h, count, text, speed, s1, s2, o1, o2) => {
   let x = 0;
   
   for (let i = 0; i < count; i++) {
@@ -36,44 +36,32 @@ export default class ParallaxScene extends Phaser.Scene {
     this.add.image(width * 0.5, height * 0.5 , 'sky')
     .setScrollFactor(0)
 
-    this.mountain = backgroundRepeat(this, 0, height, 2, 'mountain', 0.25, 0, 1, 0.5, 0.5)
+    this.mountain = backgroundRepeat(this, 0, height, 2, 'mountain', 0.25, 0.5, 0.5, 0, 1)
 
-    this.grass2 = this.add.image(width / 2.4, height / 1.5, 'grass2')
-    this.grass2.setScale(0.4, 0.4).setScrollFactor(0.5)
+    this.grass2 = backgroundRepeat(this, width / 2.4, height / 1.5, 2, 'grass2', 0.5, 0.4, 0.4) 
 
-    this.grass1 = this.add.image(width / 7.5, height / 1.5, 'grass3')
-    this.grass1.setScale(0.4, 0.4).setScrollFactor(0.5)
+    this.grass1 = backgroundRepeat(this, width / 7.5, height / 1.5, 2, 'grass3', 0.5, 0.4, 0.4) 
 
-    this.grass3 = this.add.image(width / 1.3, height / 1.5, 'grass1')
-    this.grass3.setScale(0.4, 0.4).setScrollFactor(0.5)
+    this.grass3 = backgroundRepeat(this, width / 1.3, height / 1.5, 2, 'grass1', 0.5, 0.4, 0.4)  
     
-    this.ground = this.add.image(0 , height / 1.1, 'ground').setOrigin(0,1)
-    this.ground.setScale(0.5, 0.5).setScrollFactor(0.75)
+    this.ground = backgroundRepeat(this, 0, height / 1.1, 2, 'ground', 0.75, 0.5, 0.5, 0, 1) 
     
-    this.tree1 = this.add.image(width / 5, height / 1.8, 'tree')
-    this.tree1.setScale(0.5, 0.5).setScrollFactor(0.75)
+    this.tree1 = backgroundRepeat(this, width / 5, height / 1.8, 2, 'tree', 0.75, 0.5, 0.5)
     
-    this.tree2 = this.add.image(width / 1.3, height / 1.6, 'tree')
-    this.tree2.setScale(0.35, 0.35).setScrollFactor(0.75)
+    this.tree2 = backgroundRepeat(this, width / 1.3, height / 1.6, 2, 'tree', 0.75, 0.35, 0.35) 
     
-    this.rock1 = this.add.image(width / 1.8, height / 1.3, 'rock2')
-    this.rock1.setScale(0.4, 0.4).setScrollFactor(0.75)
+    this.rock1 = backgroundRepeat(this, width / 1.8, height / 1.3, 2, 'rock2', 0.75, 0.4, 0.4) 
 
-    this.rock2 = this.add.image(width / 3.5, height / 1.3, 'rock3')
-    this.rock2.setScale(0.4, 0.4).setScrollFactor(0.75)
+    this.rock2 = backgroundRepeat(this, width / 3.5, height / 1.3, 2, 'rock3', 0.75, 0.4, 0.4) 
     
-    this.rock3 = this.add.image(width / 1.1, height / 1.3, 'rock1')
-    this.rock3.setScale(0.4, 0.4).setScrollFactor(0.75)
+    this.rock3 = backgroundRepeat(this, width / 1.1, height / 1.3, 2, 'rock1', 0.75, 0.4, 0.4) 
     
-    this.flower1 = this.add.image(width / 1.7, height / 1.2, 'flower1')
-    this.flower1.setScale(0.4, 0.4).setScrollFactor(0.75)
+    this.flower1 = backgroundRepeat(this, width / 1.7, height / 1.2, 2, 'flower1', 0.75, 0.4, 0.4) 
     
-    this.flower2 = this.add.image(width / 2.5, height / 1.3, 'flower2')
-    this.flower2.setScale(0.4, 0.4).setScrollFactor(0.75)
+    this.flower2 = backgroundRepeat(this, width / 2.5, height / 1.3, 2, 'flower2', 0.75, 0.4, 0.4) 
 
-    this.ground2 = this.add.image(0 , height , 'ground2').setOrigin(0,1)
-    this.ground2.setScale(0.45, 0.45).setScrollFactor(1)
-
+    this.ground2 = backgroundRepeat(this, 0, height, 2, 'ground2', 1.25, 0.45, 0.45, 0, 1) 
+    
     this.cursors = this.input.keyboard.createCursorKeys();
     this.cameras.main.setBounds(0,0, width * 3 ,height)
   }

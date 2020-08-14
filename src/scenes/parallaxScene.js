@@ -64,6 +64,20 @@ export default class ParallaxScene extends Phaser.Scene {
 
     this.ground2 = this.add.image(0 , height , 'ground2').setOrigin(0,1)
     this.ground2.setScale(0.45, 0.45)
+
+    this.cursors = this.input.keyboard.createCursorKeys();
+  }
+
+  update() {
+    const speed = 3
+    const cam = this.cameras.main
+
+    if (this.cursors.left.isDown) {
+      cam.scrollX -= speed
+    }
+    else if (this.cursors.right.isDown) {
+      cam.scrollX += speed
+    }
   }
   
 }

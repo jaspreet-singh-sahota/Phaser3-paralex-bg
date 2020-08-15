@@ -70,13 +70,10 @@ export default class ParallaxScene extends Phaser.Scene {
     this.rock3 = backgroundRepeat(this, width / 1.1, height / 1.3,'rock1', 0.75, 0.4, 0.4) 
     this.flower1 = backgroundRepeat(this, width / 1.7, height / 1.2,'flower1', 0.75, 0.4, 0.4)
 
-    this.player1 = this.add.sprite(1000 * 0.1, 700 * 0.45, 'player', 3).setScale(1.5, 1.5)
-    this.physics.add.existing(this.player1);
     this.player = this.physics.add.sprite(width * 0.1, height * 0.4, 'player', 3).setScale(1.3, 1.3);
 
     this.player.setBounce(0.2);
     // this.player.setCollideWorldBounds(true);
-    this.player1.body.setCollideWorldBounds(true);
     this.cameras.main.startFollow(this.player);
     
     
@@ -104,40 +101,23 @@ export default class ParallaxScene extends Phaser.Scene {
     const speed = 10
     const cam = this.cameras.main
 
+    let onGround = this.player.body.blocked.down || this.player.body.touching.down;
 
     if (this.cursors.left.isDown) {
       this.player.setVelocityX(-this.playerSpeed);
       this.player.flipX = true;
-      if (this.ground2 && !this.player.anims.isPlaying)
+      if (onGround && !this.player.anims.isPlaying)
         this.player.anims.play('walking');
     } else if (this.cursors.right.isDown) {
       this.player.setVelocityX(this.playerSpeed);
       this.player.flipX = false;
+      if (onGround && !this.player.anims.isPlaying)
         this.player.anims.play('walking');
     } else {
       this.player.body.setVelocityX(0);
       this.player.setFrame(10);
     }
 
-    // // movement to the left
-    // if (this.cursors.left.isDown) {
-
-
-      //   if (onGround && !this.player.anims.isPlaying)
-    //   // play animation if none is playing
-    //     
-    // }
-
-    // // movement to the right
-    // 
-
-    //   // stop walking animation
-    //   this.player.anims.stop('walking');
-
-    //   // set default frame
-    //   if (onGround)
-    //     
-    // }
 
     // // handle jumping
     // if (onGround && (this.cursors.space.isDown || this.cursors.up.isDown)) {

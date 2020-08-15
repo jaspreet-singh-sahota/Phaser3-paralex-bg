@@ -6,8 +6,11 @@ const backgroundRepeat = (scene, w, h, text, speed, s1, s2, o1, o2, player) => {
   for (let i = 0; i < count; i++) {
     const repeatImage = platforms.create((w + screenWidth), h, text).setOrigin( o1, o2).setScrollFactor(speed).setScale(s1, s2)
     screenWidth += scene.scale.width
-    if (text === "ground2") {
+    if (text === "ground2" || text === "star") {
       scene.physics.add.collider(player, repeatImage);
+      if (text === 'star') {
+        
+      }
     }
   }
 }
@@ -46,6 +49,13 @@ export default class ParallaxScene extends Phaser.Scene {
       margin: 2,
       spacing: 2,
     });
+
+    this.load.spritesheet('star', 'assets/images/star.png', {
+      frameWidth: 63,
+      frameHeight: 62,
+      margin: 5,
+      spacing: 2,
+    });
   }
 
   create() {
@@ -70,14 +80,19 @@ export default class ParallaxScene extends Phaser.Scene {
     this.rock3 = backgroundRepeat(this, width / 1.1, height / 1.3,'rock1', 0.75, 0.4, 0.4) 
     this.flower2 = backgroundRepeat(this, width / 2.5, height / 1.3,'flower2', 0.75, 0.4, 0.4) 
     this.player = this.physics.add.sprite(width * 0.1, height * 0.4, 'player', 3).setScale(1.3, 1.3);
+    this.player.setBounce(0.2);
     this.flower1 = backgroundRepeat(this, width / 1.7, height / 1.2,'flower1', 0.75, 0.4, 0.4)
     
-    this.player.setBounce(0.2);
-    // this.player.setCollideWorldBounds(true);
-    this.cameras.main.startFollow(this.player);
-    
-    this.ground2 = backgroundRepeat(this, 0, height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.player)
+    this.stars = this.physics.add.group({
+      key: 'star',
+      repeat: 5,
+      setXY: { x: width * 0.5, y: width * 0.5, stepX: 70 }
+    });
 
+    this.ground2 = backgroundRepeat(this, 0, height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.player)
+    this.ground2 = backgroundRepeat(this, width * 0.5, height * 0.7, this.stars, 1.25, 0.45, 0.45, 0, 1 , this.stars)
+    // this.physics.add.overlap(this.player, this.stars, null, this)
+    
     if (!this.anims.get('walking')) {
       this.anims.create({
         key: 'walking',
@@ -90,8 +105,22 @@ export default class ParallaxScene extends Phaser.Scene {
       });
     }
     
+    if (!this.anims.get('star')) {
+      this.anims.create({
+        key: 'star',
+        frames: this.anims.generateFrameNames('star', {
+          frames: [30, 31, 32, 33, 34, 35, 32, 33, 34, 35, 32, 33, 34, 35, 32, 33, 34, 35]
+        }),
+        frameRate: 12,
+        yoyo: true,
+        repeat: -1
+      });
+    }
+    
+    
     this.cursors = this.input.keyboard.createCursorKeys();
     this.cameras.main.setBounds(0,0, width * 100 ,height)
+    this.cameras.main.startFollow(this.player);
   }
 
   update() {

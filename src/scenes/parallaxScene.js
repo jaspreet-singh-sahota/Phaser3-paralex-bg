@@ -68,24 +68,23 @@ export default class ParallaxScene extends Phaser.Scene {
     this.rock1 = backgroundRepeat(this, width / 1.8, height / 1.3,'rock2', 0.75, 0.4, 0.4) 
     this.rock2 = backgroundRepeat(this, width / 3.5, height / 1.3,'rock3', 0.75, 0.4, 0.4) 
     this.rock3 = backgroundRepeat(this, width / 1.1, height / 1.3,'rock1', 0.75, 0.4, 0.4) 
-    this.flower1 = backgroundRepeat(this, width / 1.7, height / 1.2,'flower1', 0.75, 0.4, 0.4)
-
+    this.flower2 = backgroundRepeat(this, width / 2.5, height / 1.3,'flower2', 0.75, 0.4, 0.4) 
     this.player = this.physics.add.sprite(width * 0.1, height * 0.4, 'player', 3).setScale(1.3, 1.3);
-
+    this.flower1 = backgroundRepeat(this, width / 1.7, height / 1.2,'flower1', 0.75, 0.4, 0.4)
+    
+    
     this.player.setBounce(0.2);
     // this.player.setCollideWorldBounds(true);
     this.cameras.main.startFollow(this.player);
     
     
-    this.flower2 = backgroundRepeat(this, width / 2.5, height / 1.3,'flower2', 0.75, 0.4, 0.4) 
     this.ground2 = backgroundRepeat(this, 0, height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.player)
 
     if (!this.anims.get('walking')) {
-      // walking animation
       this.anims.create({
         key: 'walking',
         frames: this.anims.generateFrameNames('player', {
-          frames: [30, 31, 32, 33, 34, 35]
+          frames: [30, 31, 32, 33, 34, 35, 32, 33, 34, 35, 32, 33, 34, 35, 32, 33, 34, 35]
         }),
         frameRate: 12,
         yoyo: true,
@@ -98,9 +97,6 @@ export default class ParallaxScene extends Phaser.Scene {
   }
 
   update() {
-    const speed = 10
-    const cam = this.cameras.main
-
     let onGround = this.player.body.blocked.down || this.player.body.touching.down;
 
     if (this.cursors.left.isDown) {
@@ -118,18 +114,11 @@ export default class ParallaxScene extends Phaser.Scene {
       this.player.setFrame(10);
     }
 
-
-    // // handle jumping
-    // if (onGround && (this.cursors.space.isDown || this.cursors.up.isDown)) {
-    //   // give the player a velocity in Y
-    //   this.player.body.setVelocityY(this.jumpSpeed);
-
-    //   // stop the walking animation
-    //   this.player.anims.stop('walking');
-
-    //   // change frame
-    //   this.player.setFrame(42);
-    // }
+    if (onGround && (this.cursors.space.isDown || this.cursors.up.isDown)) {
+      this.player.body.setVelocityY(-400);
+      this.player.anims.stop('walking');
+      this.player.setFrame(42);
+    }
   }
   
 }

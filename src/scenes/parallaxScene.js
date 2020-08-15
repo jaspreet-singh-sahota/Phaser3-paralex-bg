@@ -72,11 +72,9 @@ export default class ParallaxScene extends Phaser.Scene {
     this.player = this.physics.add.sprite(width * 0.1, height * 0.4, 'player', 3).setScale(1.3, 1.3);
     this.flower1 = backgroundRepeat(this, width / 1.7, height / 1.2,'flower1', 0.75, 0.4, 0.4)
     
-    
     this.player.setBounce(0.2);
     // this.player.setCollideWorldBounds(true);
     this.cameras.main.startFollow(this.player);
-    
     
     this.ground2 = backgroundRepeat(this, 0, height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.player)
 
@@ -111,12 +109,13 @@ export default class ParallaxScene extends Phaser.Scene {
         this.player.anims.play('walking');
     } else {
       this.player.body.setVelocityX(0);
+      if (onGround)
       this.player.setFrame(10);
     }
 
     if (onGround && (this.cursors.space.isDown || this.cursors.up.isDown)) {
-      this.player.body.setVelocityY(-400);
       this.player.anims.stop('walking');
+      this.player.body.setVelocityY(-400);
       this.player.setFrame(42);
     }
   }

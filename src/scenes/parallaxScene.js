@@ -150,6 +150,18 @@ export default class ParallaxScene extends Phaser.Scene {
       });
     }
 
+    if (!this.anims.get('enemy')) {
+      this.anims.create({
+        key: 'enemy',
+        frames: this.anims.generateFrameNames('enemy', {
+          frames: [8,9, 10]
+        }),
+        frameRate: 2,
+        repeat: -1
+      });
+    }
+
+    this.enemy.anims.play('enemy')
     
     Phaser.Actions.Call(this.coin.getChildren(), child => {
       child.anims.play('spin');

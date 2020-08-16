@@ -35,6 +35,13 @@ export default class ParallaxScene extends Phaser.Scene {
       spacing: 2,
     });
 
+    this.load.spritesheet('enemy', 'assets/images/enemy.png', {
+      frameWidth: 125,
+      frameHeight: 110.33,
+      margin: 0,
+      spacing: 0,
+    });
+
     this.load.spritesheet('star', 'assets/images/star.png', {
       frameWidth: 70,
       frameHeight: 69,
@@ -89,8 +96,36 @@ export default class ParallaxScene extends Phaser.Scene {
     this.player = this.physics.add.sprite(width * 0.1, height * 0.4, 'player', 3).setScale(1.3, 1.3);
     this.player.setBounce(0.2);
     this.flower1 = this.backgroundRepeat(this, width / 1.7, height / 1.2,'flower1', 0.75, 0.4, 0.4)
- 
+    
+    function randomInteger(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    this.coin = this.physics.add.staticGroup({
+      key: 'star',
+      repeat: 100,
+      setXY: { x: width * Math.random(1), y: height * randomInteger(0.5, 0.8), stepX: 1000 },
+      setScale: { x: 0.5, y: 0.5 }
+    })
+
+    this.coin1 = this.physics.add.staticGroup({
+      key: 'star',
+      repeat: 100,
+      setXY: { x: width * Math.random(1), y: height * randomInteger(0.5, 0.8), stepX: 300 },
+      setScale: { x: 0.5, y: 0.5 }
+    })
+
+    this.coin2 = this.physics.add.staticGroup({
+      key: 'star',
+      repeat: 100,
+      setXY: { x: width * Math.random(1), y: height * randomInteger(0.5, 0.8), stepX: 300 },
+      setScale: { x: 0.5, y: 0.5 }
+    }) 
+
+    this.enemy = this.physics.add.sprite(width * 0.9, height * 0.4, 'enemy', 10).setScale(1.3, 1.3)
+    this,this.enemy.flipX = true;
     this.backgroundRepeat(this, 0, height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.player)
+    this.backgroundRepeat(this, 0, height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.enemy)
     
     if (!this.anims.get('walking')) {
       this.anims.create({
@@ -115,30 +150,6 @@ export default class ParallaxScene extends Phaser.Scene {
       });
     }
 
-    function randomInteger(min, max) {
-      return Math.random() * (max - min) + min;
-    }
-    
-    this.coin = this.physics.add.staticGroup({
-      key: 'star',
-      repeat: 100,
-      setXY: { x: width * Math.random(1), y: height * randomInteger(0.5, 0.8), stepX: 1000 },
-      setScale: { x: 0.5, y: 0.5 }
-    }) 
-
-    this.coin1 = this.physics.add.staticGroup({
-      key: 'star',
-      repeat: 100,
-      setXY: { x: width * Math.random(1), y: height * randomInteger(0.5, 0.8), stepX: 300 },
-      setScale: { x: 0.5, y: 0.5 }
-    })
-    
-    this.coin2 = this.physics.add.staticGroup({
-      key: 'star',
-      repeat: 100,
-      setXY: { x: width * Math.random(1), y: height * randomInteger(0.5, 0.8), stepX: 300 },
-      setScale: { x: 0.5, y: 0.5 }
-    }) 
     
     Phaser.Actions.Call(this.coin.getChildren(), child => {
       child.anims.play('spin');

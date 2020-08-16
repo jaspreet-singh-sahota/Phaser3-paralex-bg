@@ -150,7 +150,7 @@ export default class ParallaxScene extends Phaser.Scene {
       child.anims.play('spin');
     });
     
-    this.scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+    this.scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' }).setScrollFactor(0);
     this.physics.add.collider(this.player, this.ground2, this.ground);
     this.physics.add.overlap(this.player, [this.coin, this.coin1, this.coin2], this.collectStar, null, this)
 
@@ -168,7 +168,7 @@ export default class ParallaxScene extends Phaser.Scene {
       if (onGround && !this.player.anims.isPlaying)
         this.player.anims.play('walking');
     } else if (this.cursors.right.isDown) {
-      this.player.setVelocityX(1000);
+      this.player.setVelocityX(this.playerSpeed);
       this.player.flipX = false;
       if (onGround && !this.player.anims.isPlaying)
         this.player.anims.play('walking');

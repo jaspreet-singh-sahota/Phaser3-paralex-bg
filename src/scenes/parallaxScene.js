@@ -1,5 +1,3 @@
-
-
 function collectStar(player, star) {
   star.disableBody(true, true);
   var score = 0;
@@ -46,10 +44,10 @@ export default class ParallaxScene extends Phaser.Scene {
     });
 
     this.load.spritesheet('star', 'assets/images/star.png', {
-      frameWidth: 63,
-      frameHeight: 62,
-      margin: 5,
-      spacing: 2,
+      frameWidth: 70,
+      frameHeight: 69,
+      margin: 0,
+      spacing: 0,
     });
   }
 
@@ -62,19 +60,17 @@ export default class ParallaxScene extends Phaser.Scene {
       let repeatImage = platforms.create((w + screenWidth), h, text).setOrigin(o1, o2).setScrollFactor(speed).setScale(s1, s2)
       
       if (text === "ground2") {
-        const coin = scene.physics.add.staticGroup({
-          key: 'star',
-          repeat: 5,
-          setXY: { x: w + screenWidth, y: 700 * 0.5, stepX: 150 },
-          setScale: { x: 0.4, y: 0.4 }
-        })
-        scene.physics.add.overlap(player, coin, collectStar, null, this)
-        scene.physics.add.collider(player, [repeatImage, coin]);
+      //   scene.coin = scene.physics.add.staticGroup({
+      //     key: 'star',
+      //     repeat: 3,
+      //     setXY: { x: w + screenWidth, y: 700 * 0.5, stepX: 300 },
+      //     setScale: { x: 0.4, y: 0.4 }
+      //   })
+      //   scene.physics.add.overlap(player, scene.coin, collectStar, null, this)
+        scene.physics.add.collider(player, repeatImage);
       }
       screenWidth += scene.scale.width
     }
-
-
   }
 
   create() {
@@ -101,23 +97,8 @@ export default class ParallaxScene extends Phaser.Scene {
     this.player = this.physics.add.sprite(width * 0.1, height * 0.4, 'player', 3).setScale(1.3, 1.3);
     this.player.setBounce(0.2);
     this.flower1 = this.backgroundRepeat(this, width / 1.7, height / 1.2,'flower1', 0.75, 0.4, 0.4)
-    
-    this.stars = this.physics.add.group({
-      key: 'star',
-      repeat: 4,
-      setXY: { x: width * 0.5, y: width * 0.5, stepX: 70 },
-      setScale: { x: 0.4, y: 0.4 }
-    });
-    this.stars.children.iterate(function (child) {
-      child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-    });
-    
-    this.backgroundRepeat(this, width * 0.5, height, 'ground2', 1.25, 0.45, 0.45, 0, 1 , this.stars)
+ 
     this.backgroundRepeat(this, 0, height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.player)
-    // this.backgroundRepeat(this, width * 0.5, height * 0.7, 'star', 1.25, 0.45, 0.45, 0, 1, this.player)
-    
-    this.physics.add.collider(this.player, this.ground2, this.ground);
-    this.physics.add.overlap(this.player, this.stars, collectStar, null, this)
     
     if (!this.anims.get('walking')) {
       this.anims.create({
@@ -131,18 +112,57 @@ export default class ParallaxScene extends Phaser.Scene {
       });
     }
     
-    if (!this.anims.get('star')) {
+    if (!this.anims.get('spin')) {
       this.anims.create({
-        key: 'star',
+        key: 'spin',
         frames: this.anims.generateFrameNames('star', {
           frames: [0,1,2,3,4,5,6,7]
         }),
-        frameRate: 12,
-        yoyo: true,
+        frameRate: 5,
         repeat: -1
       });
     }
-    
+
+    function randomInteger(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    console.log(randomInteger(0.45, 0.7))
+
+    this.coin = this.physics.add.staticGroup({
+      key: 'star',
+      repeat: 100,
+      setXY: { x: width * Math.random(1), y: height * randomInteger(0.5, 0.8), stepX: 1000 },
+      setScale: { x: 0.5, y: 0.5 }
+    }) 
+
+    this.coin1 = this.physics.add.staticGroup({
+      key: 'star',
+      repeat: 100,
+      setXY: { x: width * Math.random(1), y: height * randomInteger(0.5, 0.8), stepX: 300 },
+      setScale: { x: 0.5, y: 0.5 }
+    })
+     
+    this.coin2 = this.physics.add.staticGroup({
+      key: 'star',
+      repeat: 100,
+      setXY: { x: width * Math.random(1), y: height * randomInteger(0.5, 0.8), stepX: 300 },
+      setScale: { x: 0.5, y: 0.5 }
+    }) 
+
+    Phaser.Actions.Call(this.coin.getChildren(), child => {
+      child.anims.play('spin');
+    });
+    Phaser.Actions.Call(this.coin1.getChildren(), child => {
+      child.anims.play('spin');
+    });
+    Phaser.Actions.Call(this.coin2.getChildren(), child => {
+      child.anims.play('spin');
+    });
+
+    this.physics.add.collider(this.player, this.ground2, this.ground);
+    this.physics.add.overlap(this.player, [this.coin, this.coin1, this.coin2], collectStar, null, this)
+
     this.cursors = this.input.keyboard.createCursorKeys();
     this.cameras.main.setBounds(0,0, width * 100 ,height)
     this.cameras.main.startFollow(this.player);
@@ -157,7 +177,7 @@ export default class ParallaxScene extends Phaser.Scene {
       if (onGround && !this.player.anims.isPlaying)
         this.player.anims.play('walking');
     } else if (this.cursors.right.isDown) {
-      this.player.setVelocityX(this.playerSpeed);
+      this.player.setVelocityX(1000);
       this.player.flipX = false;
       if (onGround && !this.player.anims.isPlaying)
         this.player.anims.play('walking');
@@ -166,10 +186,6 @@ export default class ParallaxScene extends Phaser.Scene {
       if (onGround)
       this.player.setFrame(10);
     }
-
-    this.stars.setVelocityX(0)
-    // this.stars.setVelocityY(0)
-    // this.stars.anims.play(star)
 
     if (onGround && (this.cursors.space.isDown || this.cursors.up.isDown)) {
       this.player.anims.stop('walking');

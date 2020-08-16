@@ -1,13 +1,5 @@
-function collectStar(player, star) {
-  star.disableBody(true, true);
-  var score = 0;
-  let scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
-
-  score += 10;
-  scoreText.setText('Score: ' + score);
-
-}
-
+var score = 0;
+var scoreText;
 export default class ParallaxScene extends Phaser.Scene {
   constructor() {
     super('parallax-scene')
@@ -60,19 +52,19 @@ export default class ParallaxScene extends Phaser.Scene {
       let repeatImage = platforms.create((w + screenWidth), h, text).setOrigin(o1, o2).setScrollFactor(speed).setScale(s1, s2)
       
       if (text === "ground2") {
-      //   scene.coin = scene.physics.add.staticGroup({
-      //     key: 'star',
-      //     repeat: 3,
-      //     setXY: { x: w + screenWidth, y: 700 * 0.5, stepX: 300 },
-      //     setScale: { x: 0.4, y: 0.4 }
-      //   })
-      //   scene.physics.add.overlap(player, scene.coin, collectStar, null, this)
         scene.physics.add.collider(player, repeatImage);
       }
       screenWidth += scene.scale.width
     }
   }
 
+  collectStar(player, star) {
+    star.disableBody(true, true);
+    
+    score += 10;
+    this.scoreText.setText('Score: ' + score); 
+  }
+  
   create() {
     const height = this.scale.height
     const width = this.scale.width
@@ -126,9 +118,7 @@ export default class ParallaxScene extends Phaser.Scene {
     function randomInteger(min, max) {
       return Math.random() * (max - min) + min;
     }
-
-    console.log(randomInteger(0.45, 0.7))
-
+    
     this.coin = this.physics.add.staticGroup({
       key: 'star',
       repeat: 100,
@@ -142,14 +132,14 @@ export default class ParallaxScene extends Phaser.Scene {
       setXY: { x: width * Math.random(1), y: height * randomInteger(0.5, 0.8), stepX: 300 },
       setScale: { x: 0.5, y: 0.5 }
     })
-     
+    
     this.coin2 = this.physics.add.staticGroup({
       key: 'star',
       repeat: 100,
       setXY: { x: width * Math.random(1), y: height * randomInteger(0.5, 0.8), stepX: 300 },
       setScale: { x: 0.5, y: 0.5 }
     }) 
-
+    
     Phaser.Actions.Call(this.coin.getChildren(), child => {
       child.anims.play('spin');
     });
@@ -159,9 +149,10 @@ export default class ParallaxScene extends Phaser.Scene {
     Phaser.Actions.Call(this.coin2.getChildren(), child => {
       child.anims.play('spin');
     });
-
+    
+    this.scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
     this.physics.add.collider(this.player, this.ground2, this.ground);
-    this.physics.add.overlap(this.player, [this.coin, this.coin1, this.coin2], collectStar, null, this)
+    this.physics.add.overlap(this.player, [this.coin, this.coin1, this.coin2], this.collectStar, null, this)
 
     this.cursors = this.input.keyboard.createCursorKeys();
     this.cameras.main.setBounds(0,0, width * 100 ,height)

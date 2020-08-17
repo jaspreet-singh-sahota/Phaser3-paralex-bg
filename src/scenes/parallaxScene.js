@@ -152,31 +152,19 @@ export default class ParallaxScene extends Phaser.Scene {
       return Math.random() * (max - min) + min;
     }
 
-    /*
-    fn
-    */
+    this.coins = []
 
-    this.coin = this.physics.add.staticGroup({
-      key: 'star',
-      repeat: 100,
-      setXY: { x: this.width * Math.random(1), y: this.height * randomInteger(0.5, 0.8), stepX: 1000 },
-      setScale: { x: 0.5, y: 0.5 }
-    })
+    for (let i = 0; i < 5; i++) {
+      this.coins.push(this.physics.add.staticGroup({
+        key: 'star',
+        repeat: 100,
+        setXY: { x: this.width * Math.random(1), y: this.height * randomInteger(0.5, 0.8), stepX: 1000 },
+        setScale: { x: 0.5, y: 0.5 }
+      })) 
+    }
 
-    this.coin1 = this.physics.add.staticGroup({
-      key: 'star',
-      repeat: 100,
-      setXY: { x: this.width * Math.random(1), y: this.height * randomInteger(0.5, 0.8), stepX: 300 },
-      setScale: { x: 0.5, y: 0.5 }
-    })
-
-    this.coin2 = this.physics.add.staticGroup({
-      key: 'star',
-      repeat: 100,
-      setXY: { x: this.width * Math.random(1), y: this.height * randomInteger(0.5, 0.8), stepX: 300 },
-      setScale: { x: 0.5, y: 0.5 }
-    }) 
-
+    console.log(this.coins.length)
+    
     this.enemy = this.physics.add.sprite(this.width * 0.9, this.height * 0.4, 'enemy', 10).setScale(1.3, 1.3)
     this,this.enemy.flipX = true;
     this.backgroundRepeat(this, 0, this.height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.player)
@@ -217,16 +205,12 @@ export default class ParallaxScene extends Phaser.Scene {
     }
 
     this.enemy.anims.play('enemy')
-    
-    Phaser.Actions.Call(this.coin.getChildren(), child => {
-      child.anims.play('spin');
-    });
-    Phaser.Actions.Call(this.coin1.getChildren(), child => {
-      child.anims.play('spin');
-    });
-    Phaser.Actions.Call(this.coin2.getChildren(), child => {
-      child.anims.play('spin');
-    });
+
+    for (let i = 0; i < this.coins.length; i++) {
+      Phaser.Actions.Call(this.coins[i].getChildren(), child => {
+        child.anims.play('spin');
+      }); 
+    }
     
     this.enemyAttack()
     this.laserGroup = new LaserGroup(this);
@@ -236,7 +220,7 @@ export default class ParallaxScene extends Phaser.Scene {
     });
     this.scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' }).setScrollFactor(0);
     this.physics.add.collider(this.player, this.ground2, this.ground, this.enemyAttack);
-    this.physics.add.overlap(this.player, [this.coin, this.coin1, this.coin2], this.collectStar, null, this)
+    this.physics.add.overlap(this.player, [this.coins[0], this.coins[1], this.coins[2], this.coins[4]], this.collectStar, null, this)
 
     this.cursors = this.input.keyboard.createCursorKeys();
     this.cameras.main.setBounds(0,0, this.width * 100 ,this.height)

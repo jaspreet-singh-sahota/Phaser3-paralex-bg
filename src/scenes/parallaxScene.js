@@ -43,10 +43,10 @@ export default class ParallaxScene extends Phaser.Scene {
     });
 
     this.load.spritesheet('enemyAttack', 'assets/images/enemy.png', {
-      frameWidth: 125,
+      frameWidth: 65,
       frameHeight: 110.33,
-      margin: 0,
-      spacing: 0,
+      margin: -10,
+      spacing: 12,
     });
 
     this.load.spritesheet('star', 'assets/images/star.png', {
@@ -203,7 +203,7 @@ export default class ParallaxScene extends Phaser.Scene {
       callbackScope: this,
       callback: function () {
         this.backgroundRepeat(this, 500, 1000, 'ground2', 1.25, 1, 1, 0, 1, this.enemyAttack)
-        let attack = this.enemyAttack.create(this.width * 0.9, 1000 * 0.44, 'enemyAttack', 10);
+        let attack = this.enemyAttack.create(this.width * 0.9, 1000 * 0.44, 'enemyAttack', 17);
         attack.flipX = true
 
         // set properties

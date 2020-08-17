@@ -1,8 +1,44 @@
+class Laser extends Phaser.Physics.Arcade.Sprite {
+  constructor(scene, x, y) {
+    super(scene, x, y, 'playerAttack', 30);
+  }
+
+  fire(x, y) {
+    this.body.reset(x, y);
+    this.setActive(true);
+    this.setVisible(true);
+    this.setVelocityX(900);
+  }
+}
+
+class LaserGroup extends Phaser.Physics.Arcade.Group {
+  constructor(scene) {
+    super(scene.physics.world, scene);
+
+    this.createMultiple({
+      frameQuantity: 30,
+      key: 'playerAttack',
+      active: false,
+      visible: false,
+      classType: Laser
+    });
+  }
+
+  fireBullet(x, y) {
+    const laser = this.getFirstDead(false);
+
+    if (laser) {
+      laser.fire(x, y);
+    }
+  }
+}
+
 var score = 0;
 var scoreText;
 export default class ParallaxScene extends Phaser.Scene {
   constructor() {
     super('parallax-scene')
+    this.laserGroup;
   }
 
   init() {
@@ -108,7 +144,6 @@ export default class ParallaxScene extends Phaser.Scene {
     this.rock3 = this.backgroundRepeat(this, this.width / 1.1, this.height / 1.3,'rock1', 0.75, 0.4, 0.4) 
     this.flower2 = this.backgroundRepeat(this, this.width / 2.5, this.height / 1.3,'flower2', 0.75, 0.4, 0.4) 
     this.player = this.physics.add.sprite(this.width * 0.1, this.height * 0.4, 'player', 3).setScale(1.3, 1.3);
-    this.playerAttack = this.physics.add.sprite(this.width * 0.15, this.height * 0.4, 'playerAttack', 30).setScale(1, 1);
     this.player.setBounce(0.2);
     this.flower1 = this.backgroundRepeat(this, this.width / 1.7, this.height / 1.2,'flower1', 0.75, 0.4, 0.4)
     
@@ -140,7 +175,6 @@ export default class ParallaxScene extends Phaser.Scene {
     this.enemy = this.physics.add.sprite(this.width * 0.9, this.height * 0.4, 'enemy', 10).setScale(1.3, 1.3)
     this,this.enemy.flipX = true;
     this.backgroundRepeat(this, 0, this.height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.player)
-    this.backgroundRepeat(this, 0, this.height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.playerAttack)
     this.backgroundRepeat(this, 0, this.height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.enemy)
     
     if (!this.anims.get('walking')) {
@@ -188,9 +222,13 @@ export default class ParallaxScene extends Phaser.Scene {
     Phaser.Actions.Call(this.coin2.getChildren(), child => {
       child.anims.play('spin');
     });
-
-    this.enemyAttack()
     
+    this.enemyAttack()
+    this.laserGroup = new LaserGroup(this);
+    
+    Phaser.Actions.Call(this.laserGroup.getChildren(), child => {
+      this.backgroundRepeat(this, 0, this.height,'ground2', 1.25, 0.45, 0.45, 0, 1 , child)
+    });
     this.scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' }).setScrollFactor(0);
     this.physics.add.collider(this.player, this.ground2, this.ground, this.enemyAttack);
     this.physics.add.overlap(this.player, [this.coin, this.coin1, this.coin2], this.collectStar, null, this)
@@ -225,26 +263,26 @@ export default class ParallaxScene extends Phaser.Scene {
       }
     });
   };
-
+  
+  fireBullet() {
+    this.laserGroup.fireBullet(this.player.x + 20, this.player.y);
+  }
 
   update() {
     let onGround = this.player.body.blocked.down || this.player.body.touching.down;
 
     if (this.cursors.left.isDown) {
       this.player.setVelocityX(-this.playerSpeed);
-      this.playerAttack.setVelocityX(-this.playerSpeed);
       this.player.flipX = true;
       if (onGround && !this.player.anims.isPlaying)
         this.player.anims.play('walking');
     } else if (this.cursors.right.isDown) {
       this.player.setVelocityX(this.playerSpeed);
-      this.playerAttack.setVelocityX(this.playerSpeed);
       this.player.flipX = false;
       if (onGround && !this.player.anims.isPlaying)
         this.player.anims.play('walking');
     } else {
       this.player.body.setVelocityX(0);
-      this.playerAttack.body.setVelocityX(0);
       if (onGround)
       this.player.setFrame(10);
     }
@@ -254,6 +292,9 @@ export default class ParallaxScene extends Phaser.Scene {
       this.player.body.setVelocityY(-400);
       this.player.setFrame(42);
     }
-  }
-  
+    this.keyX = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
+    if (this.keyX.isDown && this.player.flipX === true) {
+      this.fireBullet();
+    }
+  } 
 }

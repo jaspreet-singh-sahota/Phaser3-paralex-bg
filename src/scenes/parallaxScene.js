@@ -16,7 +16,7 @@ class LaserGroup extends Phaser.Physics.Arcade.Group {
     super(scene.physics.world, scene);
 
     this.createMultiple({
-      frameQuantity: 30,
+      frameQuantity: 20,
       key: 'playerAttack',
       active: false,
       visible: false,
@@ -125,6 +125,7 @@ export default class ParallaxScene extends Phaser.Scene {
   create() {
     this.height = this.scale.height
     this.width = this.scale.width
+    this.timer = true
     
     this.add.image(this.width * 0.5, this.height * 0.3 , 'sky')
     .setScrollFactor(0).setScale(0.8, 0.7)
@@ -150,6 +151,10 @@ export default class ParallaxScene extends Phaser.Scene {
     function randomInteger(min, max) {
       return Math.random() * (max - min) + min;
     }
+
+    /*
+    fn
+    */
 
     this.coin = this.physics.add.staticGroup({
       key: 'star',
@@ -265,7 +270,7 @@ export default class ParallaxScene extends Phaser.Scene {
   };
   
   fireBullet() {
-    this.laserGroup.fireBullet(this.player.x + 20, this.player.y);
+    
   }
 
   update() {
@@ -292,9 +297,43 @@ export default class ParallaxScene extends Phaser.Scene {
       this.player.body.setVelocityY(-400);
       this.player.setFrame(42);
     }
+
     this.keyX = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
+
     if (this.keyX.isDown && this.player.flipX === true) {
-      this.fireBullet();
+        this.laserGroup.fireBullet(this.player.x - 50, this.player.y + 10);
+        this.laserGroup.setVelocityX(-900)
+        this.time.addEvent({
+          delay: 10,
+          repeat: 0,
+          callbackScope: this,
+          callback: function () {
+            Phaser.Actions.Call(this.laserGroup.getChildren(), child => {
+              child.active = false
+            });
+          }
+        });
+    }
+
+    if (this.keyX.isDown && this.player.flipX !== true) {
+      console.log(this.timer)
+      if (this.timer) {
+        this.timer = false
+        this.laserGroup.fireBullet(this.player.x + 50, this.player.y + 10);
+        this.time.addEvent({
+          delay: 10,
+          repeat: 0,
+          callbackScope: this,
+          callback: function () {
+            Phaser.Actions.Call(this.laserGroup.getChildren(), child => {
+              child.active = false
+            });
+          }
+        });
+        setTimeout(() => {
+          this.timer = true
+        }, 1000);
+      }
     }
   } 
 }

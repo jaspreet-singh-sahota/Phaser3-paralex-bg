@@ -42,6 +42,13 @@ export default class ParallaxScene extends Phaser.Scene {
       spacing: 0,
     });
 
+    this.load.spritesheet('enemyAttack', 'assets/images/enemy.png', {
+      frameWidth: 125,
+      frameHeight: 110.33,
+      margin: 0,
+      spacing: 0,
+    });
+
     this.load.spritesheet('star', 'assets/images/star.png', {
       frameWidth: 70,
       frameHeight: 69,
@@ -73,29 +80,29 @@ export default class ParallaxScene extends Phaser.Scene {
   }
   
   create() {
-    const height = this.scale.height
-    const width = this.scale.width
+    this.height = this.scale.height
+    this.width = this.scale.width
     
-    this.add.image(width * 0.5, height * 0.3 , 'sky')
+    this.add.image(this.width * 0.5, this.height * 0.3 , 'sky')
     .setScrollFactor(0).setScale(0.8, 0.7)
     
-    this.cloud1 = this.backgroundRepeat(this, 0, height * 0.45,'cloud1', 0.07, 0.5, 0.5, 0, 1)
-    this.mountain = this.backgroundRepeat(this, 0, height,'mountain', 0.25, 0.5, 0.5, 0, 1)
-    this.cloud2 = this.backgroundRepeat(this, width/ 2, height * 0.5,'cloud2', 0.15, 0.5, 0.5, 0, 1)
-    this.grass2 = this.backgroundRepeat(this, width / 2.4, height / 1.5,'grass2', 0.5, 0.4, 0.4) 
-    this.grass1 = this.backgroundRepeat(this, width / 7.5, height / 1.5,'grass3', 0.5, 0.4, 0.4) 
-    this.grass3 = this.backgroundRepeat(this, width / 1.3, height / 1.5,'grass1', 0.5, 0.4, 0.4)  
-    this.ground = this.backgroundRepeat(this, 0, height / 1.1,'ground', 0.75, 0.5, 0.5, 0, 1) 
+    this.cloud1 = this.backgroundRepeat(this, 0, this.height * 0.45,'cloud1', 0.07, 0.5, 0.5, 0, 1)
+    this.mountain = this.backgroundRepeat(this, 0, this.height,'mountain', 0.25, 0.5, 0.5, 0, 1)
+    this.cloud2 = this.backgroundRepeat(this, this.width/ 2, this.height * 0.5,'cloud2', 0.15, 0.5, 0.5, 0, 1)
+    this.grass2 = this.backgroundRepeat(this, this.width / 2.4, this.height / 1.5,'grass2', 0.5, 0.4, 0.4) 
+    this.grass1 = this.backgroundRepeat(this, this.width / 7.5, this.height / 1.5,'grass3', 0.5, 0.4, 0.4) 
+    this.grass3 = this.backgroundRepeat(this, this.width / 1.3, this.height / 1.5,'grass1', 0.5, 0.4, 0.4)  
+    this.ground = this.backgroundRepeat(this, 0, this.height / 1.1,'ground', 0.75, 0.5, 0.5, 0, 1) 
     
-    this.tree1 = this.backgroundRepeat(this, width / 5, height / 1.8,'tree', 0.75, 0.5, 0.5)
-    this.tree2 = this.backgroundRepeat(this, width / 1.3, height / 1.6,'tree', 0.75, 0.35, 0.35) 
-    this.rock1 = this.backgroundRepeat(this, width / 1.8, height / 1.3,'rock2', 0.75, 0.4, 0.4) 
-    this.rock2 = this.backgroundRepeat(this, width / 3.5, height / 1.3,'rock3', 0.75, 0.4, 0.4) 
-    this.rock3 = this.backgroundRepeat(this, width / 1.1, height / 1.3,'rock1', 0.75, 0.4, 0.4) 
-    this.flower2 = this.backgroundRepeat(this, width / 2.5, height / 1.3,'flower2', 0.75, 0.4, 0.4) 
-    this.player = this.physics.add.sprite(width * 0.1, height * 0.4, 'player', 3).setScale(1.3, 1.3);
+    this.tree1 = this.backgroundRepeat(this, this.width / 5, this.height / 1.8,'tree', 0.75, 0.5, 0.5)
+    this.tree2 = this.backgroundRepeat(this, this.width / 1.3, this.height / 1.6,'tree', 0.75, 0.35, 0.35) 
+    this.rock1 = this.backgroundRepeat(this, this.width / 1.8, this.height / 1.3,'rock2', 0.75, 0.4, 0.4) 
+    this.rock2 = this.backgroundRepeat(this, this.width / 3.5, this.height / 1.3,'rock3', 0.75, 0.4, 0.4) 
+    this.rock3 = this.backgroundRepeat(this, this.width / 1.1, this.height / 1.3,'rock1', 0.75, 0.4, 0.4) 
+    this.flower2 = this.backgroundRepeat(this, this.width / 2.5, this.height / 1.3,'flower2', 0.75, 0.4, 0.4) 
+    this.player = this.physics.add.sprite(this.width * 0.1, this.height * 0.4, 'player', 3).setScale(1.3, 1.3);
     this.player.setBounce(0.2);
-    this.flower1 = this.backgroundRepeat(this, width / 1.7, height / 1.2,'flower1', 0.75, 0.4, 0.4)
+    this.flower1 = this.backgroundRepeat(this, this.width / 1.7, this.height / 1.2,'flower1', 0.75, 0.4, 0.4)
     
     function randomInteger(min, max) {
       return Math.random() * (max - min) + min;
@@ -104,28 +111,28 @@ export default class ParallaxScene extends Phaser.Scene {
     this.coin = this.physics.add.staticGroup({
       key: 'star',
       repeat: 100,
-      setXY: { x: width * Math.random(1), y: height * randomInteger(0.5, 0.8), stepX: 1000 },
+      setXY: { x: this.width * Math.random(1), y: this.height * randomInteger(0.5, 0.8), stepX: 1000 },
       setScale: { x: 0.5, y: 0.5 }
     })
 
     this.coin1 = this.physics.add.staticGroup({
       key: 'star',
       repeat: 100,
-      setXY: { x: width * Math.random(1), y: height * randomInteger(0.5, 0.8), stepX: 300 },
+      setXY: { x: this.width * Math.random(1), y: this.height * randomInteger(0.5, 0.8), stepX: 300 },
       setScale: { x: 0.5, y: 0.5 }
     })
 
     this.coin2 = this.physics.add.staticGroup({
       key: 'star',
       repeat: 100,
-      setXY: { x: width * Math.random(1), y: height * randomInteger(0.5, 0.8), stepX: 300 },
+      setXY: { x: this.width * Math.random(1), y: this.height * randomInteger(0.5, 0.8), stepX: 300 },
       setScale: { x: 0.5, y: 0.5 }
     }) 
 
-    this.enemy = this.physics.add.sprite(width * 0.9, height * 0.4, 'enemy', 10).setScale(1.3, 1.3)
+    this.enemy = this.physics.add.sprite(this.width * 0.9, this.height * 0.4, 'enemy', 10).setScale(1.3, 1.3)
     this,this.enemy.flipX = true;
-    this.backgroundRepeat(this, 0, height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.player)
-    this.backgroundRepeat(this, 0, height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.enemy)
+    this.backgroundRepeat(this, 0, this.height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.player)
+    this.backgroundRepeat(this, 0, this.height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.enemy)
     
     if (!this.anims.get('walking')) {
       this.anims.create({
@@ -172,15 +179,49 @@ export default class ParallaxScene extends Phaser.Scene {
     Phaser.Actions.Call(this.coin2.getChildren(), child => {
       child.anims.play('spin');
     });
+
+    this.setupSpawner()
     
     this.scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' }).setScrollFactor(0);
-    this.physics.add.collider(this.player, this.ground2, this.ground);
+    this.physics.add.collider(this.player, this.ground2, this.ground, this.enemyAttack);
     this.physics.add.overlap(this.player, [this.coin, this.coin1, this.coin2], this.collectStar, null, this)
 
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.cameras.main.setBounds(0,0, width * 100 ,height)
+    this.cameras.main.setBounds(0,0, this.width * 100 ,this.height)
     this.cameras.main.startFollow(this.player);
   }
+
+  setupSpawner() {
+    this.enemyAttack = this.physics.add.group({
+      allowGravity: false,
+      immovable: true
+    });
+
+    let spawningAttacks = this.time.addEvent({
+      delay: 3000,
+      loop: true,
+      callbackScope: this,
+      callback: function () {
+        this.backgroundRepeat(this, 500, 1000, 'ground2', 1.25, 1, 1, 0, 1, this.enemyAttack)
+        let attack = this.enemyAttack.create(this.width * 0.9, 1000 * 0.44, 'enemyAttack', 10);
+        attack.flipX = true
+
+        // set properties
+        attack.setVelocityX(-300);
+
+        // lifespan
+        this.time.addEvent({
+          delay: 1800,
+          repeat: 0,
+          callbackScope: this,
+          callback: function () {
+            attack.destroy();
+          }
+        });
+      }
+    });
+  };
+
 
   update() {
     let onGround = this.player.body.blocked.down || this.player.body.touching.down;

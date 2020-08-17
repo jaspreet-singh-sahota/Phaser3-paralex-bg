@@ -35,6 +35,13 @@ export default class ParallaxScene extends Phaser.Scene {
       spacing: 2,
     });
 
+    this.load.spritesheet('playerAttack', 'assets/images/playerAttack.png', {
+      frameWidth: 50,
+      frameHeight: 50,
+      margin: 15,
+      spacing: 5,
+    });
+
     this.load.spritesheet('enemy', 'assets/images/enemy.png', {
       frameWidth: 125,
       frameHeight: 110.33,
@@ -101,6 +108,7 @@ export default class ParallaxScene extends Phaser.Scene {
     this.rock3 = this.backgroundRepeat(this, this.width / 1.1, this.height / 1.3,'rock1', 0.75, 0.4, 0.4) 
     this.flower2 = this.backgroundRepeat(this, this.width / 2.5, this.height / 1.3,'flower2', 0.75, 0.4, 0.4) 
     this.player = this.physics.add.sprite(this.width * 0.1, this.height * 0.4, 'player', 3).setScale(1.3, 1.3);
+    this.playerAttack = this.physics.add.sprite(this.width * 0.15, this.height * 0.4, 'playerAttack', 30).setScale(1, 1);
     this.player.setBounce(0.2);
     this.flower1 = this.backgroundRepeat(this, this.width / 1.7, this.height / 1.2,'flower1', 0.75, 0.4, 0.4)
     
@@ -132,6 +140,7 @@ export default class ParallaxScene extends Phaser.Scene {
     this.enemy = this.physics.add.sprite(this.width * 0.9, this.height * 0.4, 'enemy', 10).setScale(1.3, 1.3)
     this,this.enemy.flipX = true;
     this.backgroundRepeat(this, 0, this.height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.player)
+    this.backgroundRepeat(this, 0, this.height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.playerAttack)
     this.backgroundRepeat(this, 0, this.height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.enemy)
     
     if (!this.anims.get('walking')) {
@@ -180,7 +189,7 @@ export default class ParallaxScene extends Phaser.Scene {
       child.anims.play('spin');
     });
 
-    this.setupSpawner()
+    this.enemyAttack()
     
     this.scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' }).setScrollFactor(0);
     this.physics.add.collider(this.player, this.ground2, this.ground, this.enemyAttack);
@@ -191,7 +200,7 @@ export default class ParallaxScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player);
   }
 
-  setupSpawner() {
+  enemyAttack() {
     this.enemyAttack = this.physics.add.group({
       allowGravity: false,
       immovable: true
@@ -202,14 +211,9 @@ export default class ParallaxScene extends Phaser.Scene {
       loop: true,
       callbackScope: this,
       callback: function () {
-        this.backgroundRepeat(this, 500, 1000, 'ground2', 1.25, 1, 1, 0, 1, this.enemyAttack)
         let attack = this.enemyAttack.create(this.width * 0.9, 1000 * 0.44, 'enemyAttack', 17);
         attack.flipX = true
-
-        // set properties
         attack.setVelocityX(-300);
-
-        // lifespan
         this.time.addEvent({
           delay: 1800,
           repeat: 0,
@@ -228,16 +232,19 @@ export default class ParallaxScene extends Phaser.Scene {
 
     if (this.cursors.left.isDown) {
       this.player.setVelocityX(-this.playerSpeed);
+      this.playerAttack.setVelocityX(-this.playerSpeed);
       this.player.flipX = true;
       if (onGround && !this.player.anims.isPlaying)
         this.player.anims.play('walking');
     } else if (this.cursors.right.isDown) {
       this.player.setVelocityX(this.playerSpeed);
+      this.playerAttack.setVelocityX(this.playerSpeed);
       this.player.flipX = false;
       if (onGround && !this.player.anims.isPlaying)
         this.player.anims.play('walking');
     } else {
       this.player.body.setVelocityX(0);
+      this.playerAttack.body.setVelocityX(0);
       if (onGround)
       this.player.setFrame(10);
     }

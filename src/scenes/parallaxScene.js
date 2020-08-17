@@ -7,7 +7,7 @@ class Laser extends Phaser.Physics.Arcade.Sprite {
     this.body.reset(x, y);
     this.setActive(true);
     this.setVisible(true);
-    this.setVelocityX(900);
+    this.setVelocityX(700);
   }
 }
 
@@ -34,7 +34,6 @@ class LaserGroup extends Phaser.Physics.Arcade.Group {
 }
 
 var score = 0;
-var scoreText;
 export default class ParallaxScene extends Phaser.Scene {
   constructor() {
     super('parallax-scene')
@@ -42,7 +41,7 @@ export default class ParallaxScene extends Phaser.Scene {
   }
 
   init() {
-    this.playerSpeed = 150;
+    this.playerSpeed = 250;
     this.jumpSpeed = -600;
   };
 
@@ -122,6 +121,17 @@ export default class ParallaxScene extends Phaser.Scene {
     this.scoreText.setText('Score: ' + score); 
   }
   
+  disableEnemyAttack(player, enemy) {
+    enemy.setActive(false)
+    enemy.disableBody(true, true);
+    enemy.setVisible(false)
+    player.destroy()
+  }
+
+  gameOver() {
+    console.log('gameover')
+  }
+  
   create() {
     this.height = this.scale.height
     this.width = this.scale.width
@@ -154,7 +164,7 @@ export default class ParallaxScene extends Phaser.Scene {
 
     this.coins = []
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 4; i++) {
       this.coins.push(this.physics.add.staticGroup({
         key: 'star',
         repeat: 100,
@@ -162,11 +172,9 @@ export default class ParallaxScene extends Phaser.Scene {
         setScale: { x: 0.5, y: 0.5 }
       })) 
     }
-
-    console.log(this.coins.length)
     
     this.enemy = this.physics.add.sprite(this.width * 0.9, this.height * 0.4, 'enemy', 10).setScale(1.3, 1.3)
-    this,this.enemy.flipX = true;
+    this.enemy.flipX = true;
     this.backgroundRepeat(this, 0, this.height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.player)
     this.backgroundRepeat(this, 0, this.height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.enemy)
     
@@ -217,12 +225,15 @@ export default class ParallaxScene extends Phaser.Scene {
     
     Phaser.Actions.Call(this.laserGroup.getChildren(), child => {
       this.backgroundRepeat(this, 0, this.height,'ground2', 1.25, 0.45, 0.45, 0, 1 , child)
+      this.physics.add.overlap(child, [this.enemy, this.enemyAttack], this.disableEnemyAttack, null, this)
     });
+    
     this.scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' }).setScrollFactor(0);
     this.physics.add.collider(this.player, this.ground2, this.ground, this.enemyAttack);
-    this.physics.add.overlap(this.player, [this.coins[0], this.coins[1], this.coins[2], this.coins[4]], this.collectStar, null, this)
-
+    this.physics.add.overlap(this.player, [this.coins[0], this.coins[1], this.coins[2], this.coins[3]], this.collectStar, null, this)
+    this.physics.add.overlap(this.player, [this.enemy, this.enemyAttack], this.gameOver, null, this)
     this.cursors = this.input.keyboard.createCursorKeys();
+
     this.cameras.main.setBounds(0,0, this.width * 100 ,this.height)
     this.cameras.main.startFollow(this.player);
   }
@@ -238,23 +249,39 @@ export default class ParallaxScene extends Phaser.Scene {
       loop: true,
       callbackScope: this,
       callback: function () {
-        let attack = this.enemyAttack.create(this.width * 0.9, 1000 * 0.44, 'enemyAttack', 17);
-        attack.flipX = true
-        attack.setVelocityX(-300);
-        this.time.addEvent({
-          delay: 1800,
-          repeat: 0,
-          callbackScope: this,
-          callback: function () {
-            attack.destroy();
-          }
+        if (this.enemy.visible === true) {
+          let attack = this.enemyAttack.create(this.width * 0.9, 1000 * 0.44, 'enemyAttack', 17);
+          attack.flipX = true
+          attack.setVelocityX(-300);
+          this.time.addEvent({
+            delay: 1800,
+            repeat: 0,
+            callbackScope: this,
+            callback: function () {
+              attack.destroy();
+            }
+          });
+        }
+        }
+      });
+  };
+  
+  attackInterval() {
+    this.timer = false
+    this.time.addEvent({
+      delay: 10,
+      repeat: 0,
+      callbackScope: this,
+      callback: function () {
+        Phaser.Actions.Call(this.laserGroup.getChildren(), child => {
+          child.active = false
+          child.a
         });
       }
     });
-  };
-  
-  fireBullet() {
-    
+    setTimeout(() => {
+      this.timer = true
+    }, 950);
   }
 
   update() {
@@ -285,39 +312,19 @@ export default class ParallaxScene extends Phaser.Scene {
     this.keyX = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
 
     if (this.keyX.isDown && this.player.flipX === true) {
+      if (this.timer) {
         this.laserGroup.fireBullet(this.player.x - 50, this.player.y + 10);
-        this.laserGroup.setVelocityX(-900)
-        this.time.addEvent({
-          delay: 10,
-          repeat: 0,
-          callbackScope: this,
-          callback: function () {
-            Phaser.Actions.Call(this.laserGroup.getChildren(), child => {
-              child.active = false
-            });
-          }
-        });
+        this.laserGroup.setVelocityX(-700)
+        this.attackInterval()
+      }
     }
 
     if (this.keyX.isDown && this.player.flipX !== true) {
-      console.log(this.timer)
       if (this.timer) {
-        this.timer = false
         this.laserGroup.fireBullet(this.player.x + 50, this.player.y + 10);
-        this.time.addEvent({
-          delay: 10,
-          repeat: 0,
-          callbackScope: this,
-          callback: function () {
-            Phaser.Actions.Call(this.laserGroup.getChildren(), child => {
-              child.active = false
-            });
-          }
-        });
-        setTimeout(() => {
-          this.timer = true
-        }, 1000);
+        this.attackInterval()
       }
     }
   } 
+
 }

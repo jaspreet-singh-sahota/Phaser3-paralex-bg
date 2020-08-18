@@ -168,15 +168,21 @@ export default class ParallaxScene extends Phaser.Scene {
       this.coins.push(this.physics.add.staticGroup({
         key: 'star',
         repeat: 100,
-        setXY: { x: this.width * Math.random(1), y: this.height * randomInteger(0.5, 0.8), stepX: 1000 },
+        setXY: { x: this.width * Math.random(1), y: this.height * randomInteger(0.5, 0.8), stepX: randomInteger(100, 1000) },
         setScale: { x: 0.5, y: 0.5 }
       })) 
     }
     
-    this.enemy = this.physics.add.sprite(this.width * 0.9, this.height * 0.4, 'enemy', 10).setScale(1.3, 1.3)
-    this.enemy.flipX = true;
     this.backgroundRepeat(this, 0, this.height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.player)
-    this.backgroundRepeat(this, 0, this.height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.enemy)
+    let enemySpawnPosition = 0
+    for (let i = 0; i < 34; i++) {
+      this.enemy = this.physics.add.sprite(enemySpawnPosition + this.width * 0.9, this.height * 0.4, 'enemy', 10).setScale(1.3, 1.3)
+      this.enemy.flipX = true;
+      console.log(enemySpawnPosition)
+      this.backgroundRepeat(this, 0, this.height,'ground2', 1.25, 0.45, 0.45, 0, 1 , this.enemy)
+      enemySpawnPosition += this.width * 3
+      
+    }
     
     if (!this.anims.get('walking')) {
       this.anims.create({
@@ -262,8 +268,8 @@ export default class ParallaxScene extends Phaser.Scene {
             }
           });
         }
-        }
-      });
+      }
+    });
   };
   
   attackInterval() {
